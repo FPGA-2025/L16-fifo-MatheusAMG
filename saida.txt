@@ -1,0 +1,14 @@
+VCD info: dumpfile saida.vcd opened for output.
+rstn=0, wr_en=0, rd_en=0, data_in=00000000, data_out=xxxxxxxx, full=0, empty=1
+rstn=1, wr_en=1, rd_en=0, data_in=00000000, data_out=xxxxxxxx, full=0, empty=1
+rstn=1, wr_en=1, rd_en=0, data_in=00000000, data_out=xxxxxxxx, full=0, empty=0
+rstn=1, wr_en=1, rd_en=0, data_in=00000001, data_out=xxxxxxxx, full=0, empty=0
+rstn=1, wr_en=1, rd_en=0, data_in=00000010, data_out=xxxxxxxx, full=0, empty=0
+rstn=1, wr_en=1, rd_en=0, data_in=00000011, data_out=xxxxxxxx, full=0, empty=0
+rstn=1, wr_en=1, rd_en=0, data_in=00000011, data_out=xxxxxxxx, full=1, empty=0
+rstn=1, wr_en=0, rd_en=1, data_in=00000000, data_out=xxxxxxxx, full=1, empty=0
+rstn=1, wr_en=0, rd_en=1, data_in=00000000, data_out=00000000, full=0, empty=0
+rstn=1, wr_en=0, rd_en=1, data_in=00000000, data_out=00000001, full=0, empty=0
+rstn=1, wr_en=0, rd_en=1, data_in=00000000, data_out=00000010, full=0, empty=0
+rstn=1, wr_en=0, rd_en=1, data_in=00000000, data_out=00000011, full=0, empty=1
+tb.v:47: $finish called at 18000 (1ps)
