@@ -1,0 +1,59 @@
+module fifo(
+    input wire clk,
+    input wire rstn,
+    input wire wr_en,
+    input wire rd_en,
+    input wire [7:0] data_in,
+    output reg [7:0] data_out,
+    output wire full,
+    output wire empty
+);
+
+reg [7:0] fila_fifo [3:0];
+reg [1:0] pt_wr_state, pt_rd_state;
+reg [1:0] wr_next_state, rd_next_state;
+
+assign full  = (wr_next_state == pt_rd_state);
+assign empty = (pt_rd_state == pt_wr_state);
+
+// Transição de estados
+always @(*) begin
+    case (pt_wr_state)
+        2'b00: wr_next_state = (wr_en && !full) ? 2'b01 : 2'b00;
+        2'b01: wr_next_state = (wr_en && !full) ? 2'b10 : 2'b01;
+        2'b10: wr_next_state = (wr_en && !full) ? 2'b11 : 2'b10;
+        2'b11: wr_next_state = (wr_en && !full) ? 2'b00 : 2'b11;
+    endcase
+    case (pt_rd_state)
+        2'b00: rd_next_state = (rd_en && !empty) ? 2'b01 : 2'b00;
+        2'b01: rd_next_state = (rd_en && !empty) ? 2'b10 : 2'b01;
+        2'b10: rd_next_state = (rd_en && !empty) ? 2'b11 : 2'b10;
+        2'b11: rd_next_state = (rd_en && !empty) ? 2'b00 : 2'b11;
+    endcase
+end
+
+// Atualização dos ponteiros
+always @(posedge clk or negedge rstn) begin
+    if (!rstn) begin
+        pt_wr_state <= 2'b00;
+        pt_rd_state <= 2'b00;
+    end else begin
+        pt_wr_state <= wr_next_state;
+        pt_rd_state <= rd_next_state;
+    end
+end
+
+// Escrita e leitura
+always @(posedge clk or negedge rstn) begin
+    if (!rstn) begin
+        data_out <= 8'b0;
+    end else begin
+        if (wr_en && !full)
+            fila_fifo[pt_wr_state] <= data_in;
+
+        if (rd_en && !empty)
+            data_out <= fila_fifo[pt_rd_state];
+    end
+end
+
+endmodule

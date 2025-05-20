@@ -9,31 +9,49 @@ module fifo(
     output empty
 );
 
-reg [7:0] fila_fifo [3:0]; //declarar 4 registradores de 8 bits
-reg [1:0] pt_wr; //ponteiro de escrita
-reg [1:0] pt_rd; //ponteiro de leitura
-reg [4:0] counter;
+reg [7:0] fila_fifo [0:3]; 
 
-assign full  = (counter == 4);
-assign empty = (counter == 0);
+reg [1:0] wr_pointer; //ponteiro de escrita contador
+reg [1:0] rd_pointer; //ponteiro de leitura
 
-// pode entrar e sair dados ao mesmo tempo
+//Lógica combinacional
+assign full  = (((wr_pointer + 1) == rd_pointer) || (wr_pointer == 3 && rd_pointer == 0));
+assign empty = (wr_pointer == rd_pointer);
+
+//Lógica contador write
 always @(posedge clk, negedge rstn) begin
-    if(~rstn) begin
-        pt_wr <=0;
-        pt_rd <=0;
-        counter <= 0;
+    if(~rstn)begin
+        wr_pointer <= 0;
     end
     else begin
-        if(wr_en && ~full)begin
-            fila_fifo[pt_wr] <= data_in;
-            pt_wr <= (pt_wr == 3) ? 0 : pt_wr + 1;
-            counter <= counter + 1;
+        if (~full && wr_en) begin
+            fila_fifo[wr_pointer] <= data_in;
+            // if (wr_pointer == 3) begin
+            //     wr_pointer <= 0;
+            // end
+            // else begin
+            //     wr_pointer <= wr_pointer + 1;
+            // end
+            wr_pointer <= wr_pointer + 1;
         end
-        if(rd_en && ~empty)begin
-            data_out <= fila_fifo[pt_rd];
-            pt_rd <= (pt_rd == 3) ? 0 : pt_rd + 1;
-            counter <= counter - 1;
+    end
+end
+
+//Lógica contador read
+always @(posedge clk, negedge rstn) begin
+    if(~rstn)begin
+        rd_pointer <= 0;
+    end
+    else begin
+        if (~empty && rd_en) begin
+            data_out <= fila_fifo[rd_pointer];
+            // if (rd_pointer == 3) begin
+            //     rd_pointer <= 0;
+            // end
+            // else begin
+            //     rd_pointer <= rd_pointer + 1;
+            // end
+            rd_pointer <= rd_pointer + 1;
         end
     end
 end
